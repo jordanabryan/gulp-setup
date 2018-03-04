@@ -49,9 +49,9 @@ const htmlOutputDirectory = 'dist';
 
 //compile sass within the app/scss directory and output it to app/css
 gulp.task('sass', () => {
-	return gulp.src('app/scss/*.scss')
+	return gulp.src(scssSourceDirectory)
 		.pipe(sass())
-		.pipe(gulp.dest('app/css'))
+		.pipe(gulp.dest(scssOutputDirectory))
 		.pipe(browserSync.reload({
 			stream: true
 		}))
@@ -61,16 +61,16 @@ gulp.task('sass', () => {
 
 //minify the created css and output it the dist directory
 gulp.task('minify-css', () => {
-	return gulp.src('app/css/*.css')
+	return gulp.src(cssSourceDirectory)
 		.pipe(cleanCSS({compatibility: 'ie8'}))
-		.pipe(gulp.dest('dist/css'))
+		.pipe(gulp.dest(cssOutputDirectory))
 		.on('end', () => console.log('css minifid...'))
 });
 
 
 //compile the javascript from e66, minify the javascript and output the javascript to the dist directory
 gulp.task('scripts', () => {
-	return gulp.src('app/scripts/**/*.js')
+	return gulp.src(scriptsSourceDirectory)
 		 .pipe(sourcemaps.init())
 		 .pipe(babel({
 			presets: ['env']
@@ -79,26 +79,26 @@ gulp.task('scripts', () => {
 		.pipe(rename('scripts.min.js'))
 		.pipe(uglify())
 		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest('dist/js'))
+		.pipe(gulp.dest(scriptsOutputDirectory))
 		.on('end', () => console.log('scripts compiled, minfied and moved...'))
 });
 
 
 //minify images within the assets folder and output them to the dist dirctory 
 gulp.task('images', () => {
-	return gulp.src('app/assets/**/*.+(png|jpg|jpeg|gif|svg)')
+	return gulp.src(imagesSourceDirectory)
 		.pipe(cache(imagemin({
 			interlaced: true
 		})))
-		.pipe(gulp.dest('dist/images'))
+		.pipe(gulp.dest(imagesOutputDirectory))
 		.on('end', () => { console.log('images minified and moved...') })
 })
 
 
 //move fonts over from the app directory to the dist directory
 gulp.task('fonts', () => {
-	return gulp.src('app/css/fonts/**/*')
-		.pipe(gulp.dest('dist/css/fonts'))
+	return gulp.src(fontsSourceDirectory)
+		.pipe(gulp.dest(fontsOutputDirectory))
 		.on('end', () => { console.log('fonts moved...') })
 })
 
@@ -126,8 +126,8 @@ gulp.task('browserSync',['php'], () => {
 
 //move the php from the app directory to the dist directory
 gulp.task('phpbeautify', () => {
-  gulp.src('./app/**/*.php')
-	.pipe(gulp.dest('dist'))
+  gulp.src(phpSourceDirectory)
+	.pipe(gulp.dest(phpOutputDirectory))
 	.on('end', () => console.log('php moved...'))
 });
 
@@ -137,9 +137,9 @@ gulp.task('htmlbeautify', () => {
   var options = {
 	indentSize: 2
   };
-  gulp.src('./app/*.html')
+  gulp.src(htmlSourceDirectory)
 	.pipe(htmlbeautify(options))
-	.pipe(gulp.dest('dist'))
+	.pipe(gulp.dest(htmlOutputDirectory))
 	.on('end', () => console.log('html moved and compressed...'))
 });
 
@@ -154,10 +154,10 @@ gulp.task('clean:dist', () => {
 //watch all of the scss, html, js and the php for changes and reload the files
 gulp.task('default', ['browserSync', 'sass'], () => {
 	console.log('watching files...');
-	gulp.watch('app/scss/**/*.scss', ['sass']) //watch for sass changes
-	gulp.watch('app/**/*.html', browserSync.reload)
-	gulp.watch('app/js/**/*.js', browserSync.reload)
-	gulp.watch('app/**/*.php').on('change', () => {
+	gulp.watch(scssSourceDirectory, ['sass']) //watch for sass changes
+	gulp.watch(htmlSourceDirectory, browserSync.reload)
+	gulp.watch(scriptsSourceDirectory, browserSync.reload)
+	gulp.watch(phpSourceDirectory).on('change', () => {
 		browserSync.reload();
 	});
 });
@@ -172,7 +172,3 @@ gulp.task('build', (callback) => {
 		callback
 	)
 });
-
-
-
-
