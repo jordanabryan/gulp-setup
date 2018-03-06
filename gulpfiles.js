@@ -47,10 +47,16 @@ const phpOutputDirectory = 'dist';
 const htmlOutputDirectory = 'dist';
 
 
+const swallowError = (error) => {
+  console.log(error.toString())  //log error in the console
+  this.emit('end')
+}
+
 //compile sass within the app/scss directory and output it to app/css
 gulp.task('sass', () => {
 	return gulp.src(scssSourceDirectory)
 		.pipe(sass())
+		.on('error', swallowError)
 		.pipe(gulp.dest(scssOutputDirectory))
 		.pipe(browserSync.reload({
 			stream: true
