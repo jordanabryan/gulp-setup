@@ -47,7 +47,7 @@ const phpOutputDirectory = 'dist';
 const htmlOutputDirectory = 'dist';
 
 
-const swallowError = (error) => {
+const swallowError = function(error){
   console.log(error.toString())  //log error in the console
   this.emit('end')
 }
